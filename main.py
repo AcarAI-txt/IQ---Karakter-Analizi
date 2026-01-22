@@ -15,20 +15,71 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. GLOBAL CSS - Streamlit elementlerini tema ile uyumlu hale getir
+# 2. GLOBAL CSS - Mobil App için Tam Optimizasyon
 # ==========================================
 st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0e19">
+
 <style>
-    /* Streamlit default elementlerini gizle/stillendir */
-    #MainMenu, footer, header {visibility: hidden;}
-    .stApp {background-color: #0b0e19 !important;}
+    /* ============================================
+       STREAMLIT BRANDING TAMAMEN KALDIR
+    ============================================ */
     
-    /* Tüm Streamlit container'ları şeffaf yap */
-    .stApp > header {display: none !important;}
+    /* Header, Footer, Menu - HEPSİNİ GİZLE */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    .stDeployButton {display: none !important;}
+    .viewerBadge_container__1QSob {display: none !important;}
+    .styles_viewerBadge__1yB5_ {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    
+    /* Streamlit logosu ve tüm branding */
+    .streamlit-footer {display: none !important;}
+    .css-1rs6os {display: none !important;}
+    .css-17eq0hr {display: none !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    
+    /* Sidebar tamamen gizle */
     section[data-testid="stSidebar"] {display: none !important;}
-    .block-container {padding: 0 !important; max-width: 100% !important;}
+    .stApp > header {display: none !important;}
     
-    /* Streamlit butonlarını stillendir */
+    /* ============================================
+       MOBİL OPTİMİZASYON
+    ============================================ */
+    
+    /* Full screen app deneyimi */
+    html, body, [data-testid="stAppViewContainer"], .main {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+    }
+    
+    .stApp {
+        background-color: #0b0e19 !important;
+        max-width: 100% !important;
+    }
+    
+    .block-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    /* Mobil viewport ayarları */
+    @viewport {
+        width: device-width;
+        zoom: 1.0;
+    }
+    
+    /* Touch-friendly butonlar */
     .stButton > button {
         background: linear-gradient(135deg, #0a3f4d 0%, #063640 100%) !important;
         border: 1px solid rgba(0, 229, 255, 0.3) !important;
@@ -36,30 +87,43 @@ st.markdown("""
         font-family: 'Epilogue', sans-serif !important;
         font-weight: 700 !important;
         letter-spacing: 0.15em !important;
-        padding: 1rem 2rem !important;
+        padding: 1.2rem 2rem !important; /* Daha büyük touch area */
         border-radius: 8px !important;
         transition: all 0.3s ease !important;
         text-transform: uppercase !important;
+        min-height: 48px !important; /* Touch standartları */
+        font-size: 14px !important;
     }
+    
+    .stButton > button:active {
+        transform: scale(0.98) !important;
+        background: linear-gradient(135deg, #0d5a6e 0%, #0a4a58 100%) !important;
+    }
+    
     .stButton > button:hover {
         background: linear-gradient(135deg, #0d5a6e 0%, #0a4a58 100%) !important;
         border-color: rgba(0, 229, 255, 0.6) !important;
         box-shadow: 0 0 20px rgba(0, 229, 255, 0.3) !important;
     }
     
-    /* Radio butonları stillendir */
+    /* Radio butonları - mobil dostu */
     .stRadio > div {
         background: #1B222D !important;
         border-radius: 12px !important;
         padding: 1rem !important;
         border: 1px solid rgba(255,255,255,0.05) !important;
     }
+    
     .stRadio label {
         color: #e2e8f0 !important;
         font-family: 'Manrope', sans-serif !important;
+        min-height: 44px !important; /* Touch-friendly */
+        display: flex !important;
+        align-items: center !important;
+        padding: 8px !important;
     }
     
-    /* Text input stillendir */
+    /* Text input - mobil klavye uyumlu */
     .stTextInput input, .stTextArea textarea {
         background: #0E111A !important;
         border: none !important;
@@ -67,15 +131,79 @@ st.markdown("""
         color: #e2e8f0 !important;
         font-family: 'JetBrains Mono', monospace !important;
         border-radius: 0 !important;
+        font-size: 16px !important; /* iOS zoom önleme */
+        padding: 12px 8px !important;
     }
+    
     .stTextInput input:focus, .stTextArea textarea:focus {
         border-bottom-color: #00E5FF !important;
         box-shadow: none !important;
+        outline: none !important;
     }
     
     /* Markdown text renkleri */
     .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         color: #e2e8f0 !important;
+    }
+    
+    /* Expander (Admin panel için) */
+    .streamlit-expanderHeader {
+        background: #1B222D !important;
+        border-radius: 8px !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    /* ============================================
+       MOBİL RESPONSIVE AYARLAR
+    ============================================ */
+    
+    @media only screen and (max-width: 768px) {
+        /* Mobilde daha küçük margin */
+        .block-container {
+            padding: 0 !important;
+        }
+        
+        /* Mobil font boyutları */
+        .stButton > button {
+            font-size: 13px !important;
+            padding: 1rem 1.5rem !important;
+        }
+        
+        /* Mobilde components daha küçük */
+        .streamlit-expanderHeader {
+            font-size: 12px !important;
+        }
+    }
+    
+    /* Çok küçük ekranlar */
+    @media only screen and (max-width: 480px) {
+        .stButton > button {
+            font-size: 12px !important;
+            padding: 0.9rem 1.2rem !important;
+            letter-spacing: 0.1em !important;
+        }
+    }
+    
+    /* iOS Safari safe area */
+    @supports (padding: max(0px)) {
+        .block-container {
+            padding-left: max(0px, env(safe-area-inset-left)) !important;
+            padding-right: max(0px, env(safe-area-inset-right)) !important;
+            padding-bottom: max(0px, env(safe-area-inset-bottom)) !important;
+        }
+    }
+    
+    /* Disable text selection on mobile */
+    * {
+        -webkit-tap-highlight-color: rgba(0, 229, 255, 0.2);
+        -webkit-touch-callout: none;
+    }
+    
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
     }
 </style>
 
