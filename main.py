@@ -628,11 +628,13 @@ def show_landing():
     
     # AdSense Banner (Butonlardan önce)
     banner_html = '''
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5008696884762812"
+         crossorigin="anonymous"></script>
     <div style="text-align: center; padding: 20px 0; margin: 20px 0; background: rgba(17, 30, 33, 0.3); border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.1);">
         <!-- Google AdSense Placeholder -->
         <ins class="adsbygoogle"
              style="display:block"
-             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-client="ca-pub-5008696884762812"
              data-ad-slot="XXXXXXXXXX"
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
@@ -1021,8 +1023,16 @@ def run_fbi_analysis(user_data, lang):
     """
     
     try:
+        # API Key alma (Önce secrets.toml, yoksa Environment Variable)
+        api_key = None
         if "gemini_api_key" in st.secrets:
-            genai.configure(api_key=st.secrets["gemini_api_key"])
+            api_key = st.secrets["gemini_api_key"]
+        else:
+            import os
+            api_key = os.getenv("gemini_api_key")
+            
+        if api_key:
+            genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-2.5-flash')
             response = model.generate_content(prompt)
             
