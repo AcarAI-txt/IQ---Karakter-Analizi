@@ -73,6 +73,37 @@ st.markdown("""
         margin: 0 !important;
     }
     
+    /* HTML component iframe full width */
+    .element-container,
+    .stHtml,
+    [data-testid="stIFrame"],
+    iframe {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Remove all Streamlit default spacing */
+    .css-1d391kg,
+    .css-12oz5g7,
+    .css-1lcbmhc {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Columns and rows - full width */
+    [data-testid="column"],
+    [data-testid="stHorizontalBlock"],
+    .row-widget,
+    .css-ocqkz7,
+    div[data-testid="column"] > div {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
     /* Mobil viewport ayarları */
     @viewport {
         width: device-width;
@@ -218,6 +249,7 @@ if 'page' not in st.session_state: st.session_state['page'] = 'landing'
 if 'language' not in st.session_state: st.session_state['language'] = 'TR'
 if 'user_data' not in st.session_state: st.session_state['user_data'] = {}
 if 'analysis_result' not in st.session_state: st.session_state['analysis_result'] = None
+if 'ad_watched' not in st.session_state: st.session_state['ad_watched'] = False
 # Maliyet takip sistemi
 if 'api_costs' not in st.session_state: st.session_state['api_costs'] = {
     'total_input_tokens': 0,
@@ -315,91 +347,309 @@ def show_landing():
             0%, 100% {{ opacity: 0.4; transform: scale(0.95); }}
             50% {{ opacity: 0.8; transform: scale(1.05); }}
         }}
-        .animate-breath {{ animation: breath 4s ease-in-out infinite; }}
-        .scanlines {{
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-            background-size: 100% 4px;
+        
+        @keyframes float {{
+            0%, 100% {{ transform: translateY(0px); }}
+            50% {{ transform: translateY(-15px); }}
+        }}
+        
+        @keyframes fadeIn {{
+            from {{ opacity: 0; transform: translateY(20px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+        
+        .hero-container {{
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            background: #0b0e19;
+            overflow: hidden;
+            padding: 0 !important;
+            margin: 0 !important;
+        }}
+        
+        /* Background grid */
+        .grid-bg {{
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }}
+        
+        /* Vignette */
+        .vignette {{
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%);
             pointer-events: none;
         }}
-        .material-symbols-outlined {{
-            font-family: 'Material Symbols Outlined';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
+        
+        /* Status bar */
+        .status-bar {{
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 24px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            z-index: 20;
+            background: linear-gradient(
+                180deg,
+                rgba(11, 14, 25, 0.9) 0%,
+                rgba(11, 14, 25, 0.7) 50%,
+                transparent 100%
+            );
+            backdrop-filter: blur(8px);
+        }}
+        
+        /* Brain icon section */
+        .icon-section {{
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            animation: float 6s ease-in-out infinite;
+            padding-top: 80px;
+        }}
+        
+        .brain-container {{
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 140px;
+        }}
+        
+        .brain-glow {{
+            position: absolute;
+            inset: -20px;
+            background: #00E5FF;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            animation: breath 4s ease-in-out infinite;
+        }}
+        
+        .brain-box {{
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            background: rgba(17, 30, 33, 0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+        }}
+        
+        .brain-icon {{
+            font-size: 72px;
+            color: #00E5FF;
+            filter: drop-shadow(0 0 12px rgba(0,229,255,0.6));
+        }}
+        
+        .keyhole-icon {{
+            position: absolute;
+            font-size: 28px;
+            color: #0b0e19;
+            margin-top: 36px;
+            margin-left: 4px;
+        }}
+        
+        /* Title section */
+        .title-section {{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 1s ease-out 0.3s both;
+            padding: 0 20px;
+        }}
+        
+        .main-title {{
+            color: white;
+            font-family: 'Epilogue', sans-serif;
+            font-weight: 900;
+            font-size: clamp(36px, 8vw, 56px);
+            letter-spacing: 0.25em;
+            line-height: 1.2;
+            margin: 0;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }}
+        
+        .title-cyan {{
+            color: rgba(0, 229, 255, 0.95);
+        }}
+        
+        .subtitle {{
+            color: #94a3b8;
+            font-size: clamp(13px, 2.5vw, 16px);
+            margin: 20px 0 0 0;
+            letter-spacing: 0.08em;
+            font-family: 'Manrope', sans-serif;
+        }}
+        
+        .subtitle-divider {{
             display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -webkit-font-feature-settings: 'liga';
-            font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
+            height: 1px;
+            width: 32px;
+            background: #334155;
+            vertical-align: middle;
+            margin: 0 12px;
+        }}
+        
+        /* Button section */
+        .button-section {{
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 16px;
+            padding: 0 20px 60px 20px;
+            z-index: 10;
+        }}
+        
+        /* Bottom line */
+        .bottom-line {{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #0a3f4d, transparent);
+            opacity: 0.5;
+        }}
+        
+        @media (max-width: 768px) {{
+            .status-bar {{
+                padding: 16px 16px;
+                font-size: 10px;
+            }}
+            
+            .icon-section {{
+                padding-top: 60px;
+            }}
+            
+            .brain-container,
+            .brain-box {{
+                width: 100px;
+                height: 100px;
+            }}
+            
+            .brain-icon {{
+                font-size: 56px;
+            }}
+            
+            .keyhole-icon {{
+                font-size: 20px;
+                margin-top: 26px;
+            }}
+            
+            .main-title {{
+                font-size: clamp(28px, 6vw, 40px);
+                letter-spacing: 0.2em;
+            }}
+            
+            .subtitle {{
+                font-size: clamp(11px, 2vw, 14px);
+            }}
+            
+            .button-section {{
+                padding: 0 16px 40px 16px;
+            }}
         }}
     </style>
     
-    <div style="position: relative; display: flex; flex-direction: column; min-height: 100vh; width: 100%; margin: 0; background: #0b0e19; overflow: hidden;">
+    <div class="hero-container">
+        <!-- Background layers -->
+        <div class="grid-bg"></div>
+        <div class="vignette"></div>
         
-        <!-- Grid Background -->
-        <div style="position: absolute; inset: 0; opacity: 0.03; pointer-events: none; background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
-        
-        <!-- Vignette -->
-        <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%); pointer-events: none; z-index: 0;"></div>
-        
-        <!-- Scanlines -->
-        <div class="scanlines" style="position: absolute; inset: 0; opacity: 0.1; z-index: 10;"></div>
-        
-        <!-- Top Status Bar -->
-        <div style="position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px 24px 8px; font-size: 12px; color: #64748b; font-family: 'Epilogue', sans-serif; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6;">
+        <!-- Status bar -->
+        <div class="status-bar">
             <span>{t['STATUS']}</span>
-            <span>V 2.0.4</span>
+            <span>V 2.5.0</span>
         </div>
         
-        <!-- Main Content -->
-        <div style="position: relative; z-index: 20; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0 24px;">
-            
-            <!-- Brain Icon with Glow -->
-            <div style="position: relative; margin-bottom: 48px;">
-                <!-- Outer Glow -->
-                <div class="animate-breath" style="position: absolute; inset: -20px; background: #00E5FF; border-radius: 50%; filter: blur(80px); opacity: 0.25;"></div>
-                
-                <!-- Icon Container -->
-                <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 140px; height: 140px; border-radius: 20px; background: rgba(17, 30, 33, 0.5); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); transition: transform 0.7s ease-out;">
-                    <span class="material-symbols-outlined" style="font-size: 72px; color: #00E5FF; filter: drop-shadow(0 0 12px rgba(0,229,255,0.6));">psychology</span>
-                    <!-- Keyhole overlay -->
-                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
-                        <span class="material-symbols-outlined" style="font-size: 28px; color: #0b0e19; margin-top: 36px; margin-left: 4px;">key_vertical</span>
-                    </div>
-                </div>
-                
-                <!-- Decorative Lines -->
-                <div style="position: absolute; right: -60px; top: 50%; width: 48px; height: 1px; background: linear-gradient(to right, rgba(0, 229, 255, 0.5), transparent);"></div>
-                <div style="position: absolute; left: -60px; top: 50%; width: 48px; height: 1px; background: linear-gradient(to left, rgba(0, 229, 255, 0.5), transparent);"></div>
-            </div>
-            
-            <!-- Title Section -->
-            <div style="text-align: center; margin-bottom: 48px;">
-                <h1 style="color: white; font-family: 'Epilogue', sans-serif; font-weight: 900; font-size: 48px; letter-spacing: 0.25em; line-height: 1.2; margin: 0; text-shadow: 0 4px 8px rgba(0,0,0,0.5);">
-                    PROJECT<br/><span style="color: rgba(0, 229, 255, 0.95);">ZERO</span>
-                </h1>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 20px;">
-                    <div style="height: 1px; width: 32px; background: #334155;"></div>
-                    <p style="color: #94a3b8; font-size: 15px; margin: 0; letter-spacing: 0.08em;">{t['TITLE']}</p>
-                    <div style="height: 1px; width: 32px; background: #334155;"></div>
+        <!-- Brain icon section (top) -->
+        <div class="icon-section">
+            <div class="brain-container">
+                <div class="brain-glow"></div>
+                <div class="brain-box">
+                    <span class="material-symbols-outlined brain-icon">psychology</span>
+                    <span class="material-symbols-outlined keyhole-icon">key_vertical</span>
                 </div>
             </div>
         </div>
         
-        <!-- Bottom Gradient Line -->
-        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, #0a3f4d, transparent); opacity: 0.5;"></div>
+        <!-- Title section (middle) -->
+        <div class="title-section">
+            <h1 class="main-title">
+                PROJECT<br/><span class="title-cyan">ZERO</span>
+            </h1>
+            <div style="margin-top: 20px;">
+                <span class="subtitle-divider"></span>
+                <span class="subtitle">{t['TITLE']}</span>
+                <span class="subtitle-divider"></span>
+            </div>
+        </div>
+        
+        <!-- Empty space for buttons (bottom) -->
+        <div class="button-section">
+            <!-- Streamlit butonları buraya gelecek -->
+        </div>
+        
+        <!-- Bottom line -->
+        <div class="bottom-line"></div>
     </div>
     '''
     
-    components.html(landing_html, height=750, scrolling=False)
+    components.html(landing_html, height=900, scrolling=False)
+    
+    # AdSense Banner (Butonlardan önce)
+    banner_html = '''
+    <div style="text-align: center; padding: 20px 0; margin: 20px 0; background: rgba(17, 30, 33, 0.3); border-radius: 8px; border: 1px solid rgba(0, 229, 255, 0.1);">
+        <!-- Google AdSense Placeholder -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        
+        <!-- Placeholder görünüm -->
+        <div style="min-height: 90px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 12px; font-family: monospace;">
+            [ AdSense Banner - 728x90 ]
+        </div>
+    </div>
+    '''
+    components.html(banner_html, height=150, scrolling=False)
     
     # Native Streamlit butonları
-    col1, col2, col3 = st.columns([1, 2, 1])
+    col1, col2, col3 = st.columns([0.1, 2, 0.1])
     with col2:
         if st.button(f"🔐 {t['BTN']}", use_container_width=True, type="primary"):
             st.session_state['page'] = 'quiz'
@@ -723,7 +973,7 @@ def run_fbi_analysis(user_data, lang):
 
     ÇIKTI FORMATI (Sadece JSON, tüm alanları eksiksiz doldur):
     {{
-        "iq": "Sayı (95-145 arası)",
+        "iq": "Sayı (70-145 arası)",
         "archetype": "İngilizce kod adı (örn: The Architect, The Shadow Walker, The Void Strategist, The Silent Predator, The Chaos Theorist)",
         "logic_score": 0-100 arası sayı,
         "empathy_score": 0-100 arası sayı,
@@ -741,7 +991,21 @@ def run_fbi_analysis(user_data, lang):
         "shadow_trait": "Bastırılmış karanlık yön ve stres altındaki tehlikeli eğilimlerin detaylı açıklaması (3-4 cümle). Bu kişinin çöküş senaryosu ne olabilir? Hangi tetikleyiciler onu dengesizleştirebilir?"
     }}
     
-    ÖNEMLİ: Analiz çok detaylı ve etkileyici olmalı. Kullanıcı kendini özel hissetmeli.
+    KRİTİK: IQ SKORLAMA VE GERÇEKÇİLİK KURALLARI (ÇOK KATI UYGULA):
+    
+    1.  **VARSAYILAN SKOR:** Eğer cevaplar "normal", "ortalama" veya "standart" ise, IQ skorunu KESİNLİKLE **95-105** aralığında ver.
+    2.  **YÜKSEK SKOR ENGELİ:** 115 ve üzeri vermek için kullanıcının cevaplarında AÇIKÇA görülen kompleks strateji, çok katmanlı düşünme veya sıra dışı bağlantılar olmalı.
+    3.  **ÇOK YÜKSEK SKOR (130+) YASAĞI:** Sadece "Ben bir deha gibi düşünüyorum" diyenlere değil, cevapların İÇERİĞİNDE bunu kanıtlayanlara ver. %98 ihtimalle skor 130'un ALTINDA olmalı.
+    4.  **DAĞILIM HEDEFİ:**
+        -   %50 İhtimalle: 90 - 105 (Ortalama)
+        -   %30 İhtimalle: 105 - 115 (Ortalama Üstü)
+        -   %15 İhtimalle: 115 - 125 (Zeki)
+        -   %4 İhtimalle: 125 - 135 (Üstün)
+        -   %1 İhtimalle: 135+ (Dahi)
+    
+    YAPAY ZEKA OLARAK SKORLARI ŞİŞİRME! GERÇEKÇİ VE HATTA BİRAZ "CİMRİ" OL. Müşteri memnuniyeti için yüksek puan vermek YASAKTIR. Doğru analiz yap.
+    
+    ÖNEMLİ: Analiz metni motive edici olabilir, ancak IQ sayısı matematiksel gerçekliğe dayanmalı.
     
     VERİLER: {user_data}
     """
@@ -804,6 +1068,53 @@ def run_fbi_analysis(user_data, lang):
 def show_result():
     """Sonuç ekranı - Detaylı FBI Raporu"""
     t = CONTENT[st.session_state['language']]['RESULT']
+    
+    # Reklam paywall kontrolü
+    if not st.session_state.get('ad_watched', False):
+        # Countdown başlatma
+        if 'ad_timer_start' not in st.session_state:
+            st.session_state['ad_timer_start'] = time.time()
+        
+        elapsed = int(time.time() - st.session_state['ad_timer_start'])
+        remaining = max(0, 30 - elapsed)
+        
+        # 30 saniye geçtiyse otomatik unlock
+        if remaining == 0:
+            st.session_state['ad_watched'] = True
+            del st.session_state['ad_timer_start']
+            st.rerun()
+        
+        # Paywall UI
+        lang = st.session_state['language']
+        
+        st.markdown(f"""
+        <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <h1 style="color: #00E5FF; font-family: 'Epilogue', sans-serif; font-size: clamp(28px, 6vw, 48px); margin-bottom: 40px;">
+                🔒 {"ANALİZ KİLİTLİ" if lang == "TR" else "ANALYSIS LOCKED"}
+            </h1>
+            
+            <div style="position: relative; width: 100%; max-width: 640px; aspect-ratio: 16/9; background: linear-gradient(135deg, #0a1a2e 0%, #0f2438 50%, #0a1a2e 100%); border-radius: 12px; border: 2px solid rgba(0, 229, 255, 0.5); box-shadow: 0 0 40px rgba(0, 229, 255, 0.3); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;">
+                
+                <div style="font-family: monospace; color: #64748b; font-size: 14px;">
+                    [ 30 Second Video Ad ]
+                </div>
+                
+                <div style="font-size: clamp(80px, 20vw, 150px); font-weight: 900; font-family: 'Epilogue', sans-serif; color: #00E5FF; text-shadow: 0 0 30px rgba(0, 229, 255, 0.8); line-height: 1;">
+                    {remaining}
+                </div>
+                
+                <div style="color: rgba(255, 255, 255, 0.7); font-size: clamp(14px, 3vw, 18px); font-family: 'Manrope', sans-serif;">
+                    {"Reklam bitmek üzere..." if lang == "TR" else "Ad ending soon..."}
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Her saniye sayfayı yenile
+        time.sleep(1)
+        st.rerun()
+        
+        return  # Buradan çık, sonuçları gösterme
     
     # Analiz yap
     if st.session_state['analysis_result'] is None:
