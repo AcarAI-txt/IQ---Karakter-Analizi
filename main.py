@@ -1002,10 +1002,20 @@ def run_fbi_analysis(user_data, lang):
         -   %15 İhtimalle: 115 - 125 (Zeki)
         -   %4 İhtimalle: 125 - 135 (Üstün)
         -   %1 İhtimalle: 135+ (Dahi)
+
+    🚨 **TROLL / SPAM FİLTRESİ (EN ÖNEMLİ KURAL):**
+    Eğer kullanıcı verileri (user_data) anlamsız, rastgele tuşlara basılmış (örn: "asdasd", "qweqwe", "sadsad"), çok kısa veya tamamen mantıksız ise:
+    -   **IQ:** 60-75 arası ver.
+    -   **Archetype:** "The Troll", "The Spammer" veya "The Glitch".
+    -   **Risk Level:** HIGH.
+    -   **Character Match:** "Gollum", "Jar Jar Binks" veya "Ed (Lion King)".
+    -   **Character Match Reason:** Ciddiyetsiz ve kaotik davranışlar sergiliyor.
+    -   **Detailed Analysis:** Kullanıcının ciddiyetsizliğini, sistemi kandırma çabasını ve odaklanma sorununu analiz et. Bunun zeka değil, davranış bozukluğu göstergesi olduğunu belirt.
+    -   **Shadow Trait:** "Anlamsızlık ve Kaos". Gerçeklikten kaçış ve manipülasyon eğilimi.
     
     YAPAY ZEKA OLARAK SKORLARI ŞİŞİRME! GERÇEKÇİ VE HATTA BİRAZ "CİMRİ" OL. Müşteri memnuniyeti için yüksek puan vermek YASAKTIR. Doğru analiz yap.
     
-    ÖNEMLİ: Analiz metni motive edici olabilir, ancak IQ sayısı matematiksel gerçekliğe dayanmalı.
+    ÖNEMLİ: Analiz metni motive edici olabilir, ancak IQ sayısı matematiksel gerçekliğe dayanmalı. Eğer TROLL ise acıma.
     
     VERİLER: {user_data}
     """
