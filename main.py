@@ -974,7 +974,7 @@ def run_fbi_analysis(user_data, lang):
     ÇIKTI FORMATI (Sadece JSON, tüm alanları eksiksiz doldur):
     {{
         "iq": "Sayı (70-145 arası)",
-        "archetype": "İngilizce kod adı (örn: The Architect, The Shadow Walker, The Void Strategist, The Silent Predator, The Chaos Theorist)",
+        "archetype": "Kullanıcının dilinde ({lang}) havalı ve gizemli bir kod adı. (Örn: Sessiz Avcı, Gölge Stratejist, Kaos Mimarı, Zihin Okuyucu, Görünmez El)",
         "logic_score": 0-100 arası sayı,
         "empathy_score": 0-100 arası sayı,
         "risk_level": "LOW / MEDIUM / HIGH",
