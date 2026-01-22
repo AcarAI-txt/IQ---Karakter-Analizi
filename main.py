@@ -893,9 +893,14 @@ def show_quiz():
             st.rerun()
     with col2:
         if st.button("🔏 MÜHÜRLE VE GÖNDER", use_container_width=True, type="primary"):
-            st.session_state['user_data'] = user_answers
-            st.session_state['page'] = 'paywall'
-            st.rerun()
+            # Boş cevap kontrolü - max 2 boş soru hakkı
+            empty_count = sum(1 for ans in user_answers.values() if not ans or str(ans).strip() == '')
+            if empty_count > 2:
+                st.error(f"⚠️ Çok fazla boş soru var ({empty_count} tane). Lütfen en az {len(user_answers) - 2} soruyu yanıtlayın.")
+            else:
+                st.session_state['user_data'] = user_answers
+                st.session_state['page'] = 'result'  # Direkt sonuç sayfasına git (video yok)
+                st.rerun()
 
 
 def show_paywall():
@@ -1003,19 +1008,32 @@ def run_fbi_analysis(user_data, lang):
         -   %4 İhtimalle: 125 - 135 (Üstün)
         -   %1 İhtimalle: 135+ (Dahi)
 
-    🚨 **TROLL / SPAM FİLTRESİ (EN ÖNEMLİ KURAL):**
-    Eğer kullanıcı verileri (user_data) anlamsız, rastgele tuşlara basılmış (örn: "asdasd", "qweqwe", "sadsad"), çok kısa veya tamamen mantıksız ise:
-    -   **IQ:** 60-75 arası ver.
-    -   **Archetype:** "The Troll", "The Spammer" veya "The Glitch".
+    🚨 **TROLL / SPAM / BOŞ CEVAP FİLTRESİ (EN ÖNEMLİ KURAL - ÇOK KATI UYGULA):**
+    
+    AŞAĞIDAKİ DURUMLARDAN HERHANGİ BİRİ VARSA TROLL OLARAK DEĞERLENDİR:
+    1. Cevapların %30'undan fazlası boş veya çok kısa (1-2 kelime)
+    2. Anlamsız tuş kombinasyonları ("asdasd", "qweqwe", "sadsad", "aaa", "123", "..." vb.)
+    3. Aynı cevabın tekrarı (copy-paste)
+    4. Alakasız veya saçma yanıtlar (örn: matematik sorusuna "muz" yazmak)
+    5. Gerçekdışı abartılı iddialar ("Ben Einstein'dan zekiyim", "IQ'm 200")
+    6. Emoji spam veya tek karakter cevapları
+    
+    TROLL TESPİT EDİLDİĞİNDE:
+    -   **IQ:** 55-70 arası ver (ASLA YÜKSEK VERME!).
+    -   **Archetype:** "Dijital Parazit", "Sistem Çöpü", "Kaotik Hiçlik", "Dikkat Dilencisi" veya "Boşluk Lordu".
     -   **Risk Level:** HIGH.
-    -   **Character Match:** "Gollum", "Jar Jar Binks" veya "Ed (Lion King)".
-    -   **Character Match Reason:** Ciddiyetsiz ve kaotik davranışlar sergiliyor.
-    -   **Detailed Analysis:** Kullanıcının ciddiyetsizliğini, sistemi kandırma çabasını ve odaklanma sorununu analiz et. Bunun zeka değil, davranış bozukluğu göstergesi olduğunu belirt.
-    -   **Shadow Trait:** "Anlamsızlık ve Kaos". Gerçeklikten kaçış ve manipülasyon eğilimi.
+    -   **Character Match:** "Gollum" (açgözlü ve patolojik), "Jar Jar Binks" (aptal ve yıkıcı), "Patrick Star" (beyinsiz), "Ed (Lion King)" (salak sırıtış), "Scrappy-Doo" (sinir bozucu). KESİNLİKLE Thomas Shelby, Walter White, Professor gibi karizmatik karakterler VERME!
+    -   **Character Match Reason:** Bu kişi testi ciddiye almadı, sistemi trollemeye çalıştı. Dikkat süresi ve odaklanma kapasitesi ciddi şekilde düşük. Sorumluluk almaktan kaçınan, kolay yolu seçen bir profil.
+    -   **Detailed Analysis:** Acımasız ol. Bu kişinin neden başarısız olacağını, neden ciddiye alınmayacağını, odaklanma ve disiplin eksikliğini detaylı analiz et. "Bu test bile çok zor geldiyse gerçek hayatta ne yapacaksın?" tarzında sert yorumlar ekle. Motivasyon verme, eleştir.
+    -   **Shadow Trait:** "Kronik Kaçış ve Yüzeysellik". Derinlikten korkan, her şeyi hafife alan, sonra başarısızlığı başkalarına yükleyen bir profil. Gerçek potansiyelini asla keşfedemeyecek çünkü çaba göstermiyor.
+    -   **logic_score:** 10-25 arası
+    -   **empathy_score:** 15-30 arası
+    
+    ⚠️ ASLA AMA ASLA TROLL BİRİNE "THOMAS SHELBY", "PROFESSOR", "WALTER WHITE", "SHERLOCK" GİBİ COOL KARAKTERLERİ VERME! Bu karakterler GERÇEKTEN düşünerek cevap verenler için.
     
     YAPAY ZEKA OLARAK SKORLARI ŞİŞİRME! GERÇEKÇİ VE HATTA BİRAZ "CİMRİ" OL. Müşteri memnuniyeti için yüksek puan vermek YASAKTIR. Doğru analiz yap.
     
-    ÖNEMLİ: Analiz metni motive edici olabilir, ancak IQ sayısı matematiksel gerçekliğe dayanmalı. Eğer TROLL ise acıma.
+    ÖNEMLİ: Analiz metni motive edici olabilir, ancak IQ sayısı matematiksel gerçekliğe dayanmalı. Eğer TROLL ise KELEPİRCE EZ.
     
     VERİLER: {user_data}
     """
@@ -1084,55 +1102,10 @@ def run_fbi_analysis(user_data, lang):
 
 
 def show_result():
-    """Sonuç ekranı - Detaylı FBI Raporu"""
+    """Sonuç ekranı - Detaylı FBI Raporu (Video izleme kaldırıldı)"""
     t = CONTENT[st.session_state['language']]['RESULT']
     
-    # Reklam paywall kontrolü
-    if not st.session_state.get('ad_watched', False):
-        # Countdown başlatma
-        if 'ad_timer_start' not in st.session_state:
-            st.session_state['ad_timer_start'] = time.time()
-        
-        elapsed = int(time.time() - st.session_state['ad_timer_start'])
-        remaining = max(0, 30 - elapsed)
-        
-        # 30 saniye geçtiyse otomatik unlock
-        if remaining == 0:
-            st.session_state['ad_watched'] = True
-            del st.session_state['ad_timer_start']
-            st.rerun()
-        
-        # Paywall UI
-        lang = st.session_state['language']
-        
-        st.markdown(f"""
-        <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-            <h1 style="color: #00E5FF; font-family: 'Epilogue', sans-serif; font-size: clamp(28px, 6vw, 48px); margin-bottom: 40px;">
-                🔒 {"ANALİZ KİLİTLİ" if lang == "TR" else "ANALYSIS LOCKED"}
-            </h1>
-            
-            <div style="position: relative; width: 100%; max-width: 640px; aspect-ratio: 16/9; background: linear-gradient(135deg, #0a1a2e 0%, #0f2438 50%, #0a1a2e 100%); border-radius: 12px; border: 2px solid rgba(0, 229, 255, 0.5); box-shadow: 0 0 40px rgba(0, 229, 255, 0.3); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;">
-                
-                <div style="font-family: monospace; color: #64748b; font-size: 14px;">
-                    [ 30 Second Video Ad ]
-                </div>
-                
-                <div style="font-size: clamp(80px, 20vw, 150px); font-weight: 900; font-family: 'Epilogue', sans-serif; color: #00E5FF; text-shadow: 0 0 30px rgba(0, 229, 255, 0.8); line-height: 1;">
-                    {remaining}
-                </div>
-                
-                <div style="color: rgba(255, 255, 255, 0.7); font-size: clamp(14px, 3vw, 18px); font-family: 'Manrope', sans-serif;">
-                    {"Reklam bitmek üzere..." if lang == "TR" else "Ad ending soon..."}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Her saniye sayfayı yenile
-        time.sleep(1)
-        st.rerun()
-        
-        return  # Buradan çık, sonuçları gösterme
+    # Video izleme zorunluluğu kaldırıldı - direkt sonuç göster
     
     # Analiz yap
     if st.session_state['analysis_result'] is None:
